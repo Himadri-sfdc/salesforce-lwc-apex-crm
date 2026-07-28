@@ -1,0 +1,56 @@
+<template>
+    <lightning-card title="Account Manager (Without Apex)" icon-name="standard:account">
+
+        <div class="slds-m-around_medium">
+
+            <lightning-input label="Account Id" value={recordId} onchange={handleRecordId}>
+            </lightning-input>
+
+            <lightning-input label="Account Name" value={name} onchange={handleName} class="slds-m-top_small">
+            </lightning-input>
+
+            <template if:true={isLoading}>
+                <lightning-spinner alternative-text="Loading" size="medium">
+                </lightning-spinner>
+            </template>
+
+            <div class="slds-m-top_medium">
+
+                <lightning-button label="Create" variant="brand" onclick={handleCreate}>
+                </lightning-button>
+
+                <lightning-button label="Update" variant="success" onclick={handleUpdate} disabled={disableAction}
+                    class="slds-m-left_small">
+                </lightning-button>
+
+                <lightning-button label="Delete" variant="destructive" onclick={handleDelete} disabled={disableAction}
+                    class="slds-m-left_small">
+                </lightning-button>
+
+                <lightning-button label="Reset" onclick={handleReset} class="slds-m-left_small">
+                </lightning-button>
+
+            </div>
+
+            <template if:true={recordId}>
+                <div class="slds-box slds-m-top_large">
+
+                    <p>
+                        <strong>Current Account</strong>
+                    </p>
+
+                    <p class="slds-m-top_small">
+                        <strong>Id :</strong> {recordId}
+                    </p>
+
+                    <p>
+                        <strong>Name :</strong> {name}
+                    </p>
+
+                </div>
+            </template>
+
+        </div>
+
+    </lightning-card>
+</template>
