@@ -25,6 +25,7 @@ public with sharing class ContactBasedOnFieldChange {
     public static void ContactCreateWithFieldChange2(List<Account> newList, Map<Id, Account> oldMap)
     {
         List<Contact> conList = new List<Contact>();
+
         List<Contact> conDeleteList = new List<Contact>();
         
         for(Account acc : newList)
