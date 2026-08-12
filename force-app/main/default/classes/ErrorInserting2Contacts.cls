@@ -1,28 +1,39 @@
 public with sharing class ErrorInserting2Contacts {
     
-    public static void restrictDeletionIfContactsExist(List<Account> accList)
+  public static void LimitContacts(List<Contact> conList)
     {
-        Set<Id> accSet = new Set<Id>();
-        Set<Id> conWithAcc = new Set<Id>();
+        if(conList.isEmpty() || conList == null) return;
         
-        for(Account acc : accList)
-        {
-            accSet.add(acc.Id);
-        }
+        Set<Id> conWithId = new Set<Id>();
+        Map<Id,Integer> existingCon = new Map<Id,Integer>();
+        Map<Id,Integer> contactNew = new Map<Id,Integer>();
         
-        if(!accSet.isEmpty())
-        {
-            for(Contact con : [SELECT AccountId FROM Contact WHERE AccountId IN : accSet])
-            {
-                conWithAcc.add(con.AccountId);
+        for(Contact newCon : conList){
+            
+            if(newCon.AccountId != null){
+                
+                conWithId.add(newCon.AccountId);
             }
         }
-        for(Account acc : accList)
-        {
-            if(conWithAcc.contains(acc.Id))
+        if(!conWithId.isEmpty()){
+            
+            for(AggregateResult aggr : [SELECT accountId accId, Count(Id) cnt FROM Contact WHERE AccountId IN : conWithId GROUP BY AccountId])
             {
-                acc.addError('Account With Contact Cannot be deleted');
+                existingCon.put((Id)aggr.get('accId'),(Integer)aggr.get('cnt'));
             }
+        }
+        for(Contact newCon : conList){
+            
+            Integer existing = existingCon.containsKey(newCon.AccountId) ? existingCon.get(newCon.AccountId) : 0;
+            Integer newValues = contactNew.containsKey(newCon.AccountId) ? contactNew.get(newCon.AccountId) : 0;
+            if((existing + newValues) >= 2){
+                
+                newCon.addError('Only 2 contact allowed per Account');
+            } else {
+                
+                contactNew.put(newCon.AccountId,newValues+1);
+            }
+            
         }
     }
 }
